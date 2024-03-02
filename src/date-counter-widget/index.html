@@ -1,0 +1,198 @@
+<!--
+  プレースホルダ。実行時には非表示となる
+  data-xxxxx の属性を編集し、必要なパラメータを設定する
+  ・data-today : 現在日として扱う日付をyyyy-mm-dd形式で設定する。基本的に設定しなくて良い（空にする）。動作確認用。
+  ・data-days-after : 現在日＋ここで設定する日数後の日付を計算する。マイナスも設定可。
+  ・data-skip-weekends : trueに設定した場合、計算後の日付が土日にあたる場合、次の月曜日まで進めた日付とする
+  ・data-holidays : 祝日リスト。祝日などをyyyy-mm-dd形式、カンマ区切りで複数設定する。計算後の日付がこのリストに含まれる場合、翌日に進める。
+  ・data-pre-description : 表示する文章の前部分
+  ・data-pre-description : 表示する文章の後部分
+  ・data-datestyle : 日付の表示形式。full…yyyy年m月d日と曜日、long…yyyy年m月d日、short…yyyy/mm/dd
+  ※次のように文章が表示される
+    表示する文章の前部分 + 計算結果の日付 + 表示する文章の後部分
+-->
+<div
+  id="widget-placeholder"
+  data-today="2024-03-04"
+  data-days-after="5"
+  data-skip-weekends="true"
+  data-holidays="2024-01-01,2024-01-02,2024-01-03,2024-03-11,2024-03-12,2024-03-13,2024-03-14,2024-03-15"
+  data-pre-description="この届け出は"
+  data-post-description="以降に提出可能です。"
+  data-datestyle="short"
+>
+  widget should be rendered here, put alternative text in case of failure.
+  <!-- ここにウィジェットが表示されます。表示されない場合の代替テキストを設定します。 -->
+</div>
+
+<!-- 文字部分のスタイルをここで設定します -->
+<style id="custom-styles">
+  /* 前後の文章 */
+  .pre-description,
+  .post-description {
+    font-size: 1em;
+    color: gray;
+  }
+  /* 日付 */
+  .calcurated-date {
+    font-size: 1.5em;
+    font-weight: 500;
+    color: red;
+  }
+  /* 文章の配置設定 */
+  .parent-container {
+    text-align: center;
+  }
+</style>
+
+<!-- 枠部分のスタイルをここで設定します -->
+<style>
+  /* 枠となるiframe */
+  .date-counter-view {
+    border: solid 2px;
+    border-color: gray;
+    width: 100%;
+    height: 0px; /*heightは必ず0pxにしておくこと（内容によって自動調整されますが、高さがないと150pxになってしまうため）*/
+  }
+</style>
+
+<!-- 
+  *************************************************************
+　***** 注意 ここから先は（心得がなければ）変更しないこと *****
+  *************************************************************
+-->
+
+<!-- 設定の反映処理 -->
+<script>
+  (function () {
+    "use strict";
+
+    // プレースホルダからパラメータを取得し、非表示にする
+    let placeholder = document.getElementById("widget-placeholder");
+    let holidays = placeholder.dataset.holidays;
+    let today = placeholder.dataset.today;
+    let daysAfter = Number(placeholder.dataset.daysAfter);
+    let skipWeekends = placeholder.dataset.skipWeekends === "true";
+    let datestyle = placeholder.dataset.datestyle;
+    let preDescription = placeholder.dataset.preDescription;
+    let postDescription = placeholder.dataset.postDescription;
+    placeholder.style.display = "none";
+
+    // iframeを作成
+    let iframe = document.createElement("iframe");
+    iframe.scrolling = "no";
+    iframe.classList.add("date-counter-view");
+    iframe.addEventListener("load", (e) => {
+      // 高さ自動調節
+      e.currentTarget.style.height =
+        e.currentTarget.contentWindow.document.body.scrollHeight + "px";
+    });
+
+    // iframeを設置
+    placeholder.parentNode.insertBefore(iframe, placeholder);
+
+    // widgetの中身を作成
+    let widget = constructWidget(
+      holidays,
+      today,
+      daysAfter,
+      skipWeekends,
+      preDescription,
+      postDescription,
+      datestyle
+    );
+
+    // iframe内htmlとしてwidgetを設定
+    let doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(widget);
+    doc.head.appendChild(document.getElementById("custom-styles"));
+    doc.close();
+
+    /**
+     * widgetの内容
+     **/
+    function constructWidget(
+      holidays,
+      today,
+      daysAfter,
+      skipWeekends,
+      preDescription,
+      postDescription,
+      datestyle
+    ) {
+      let calcuratedDate = ((
+        today,
+        holidays,
+        daysAfter,
+        skipWeekends,
+        datestyle
+      ) => {
+        // 祝日リストをカンマで分割・空白を除去し、配列に格納
+        let holidaysArray = holidays
+          .split(",")
+          .filter((item) => item)
+          .map((item) => item.trim());
+        // todayの値が設定されている場合は、その日とする（テスト用）
+        let calcurated = today ? new Date(today) : new Date();
+        // daysAfter後の日付を計算
+        calcurated.setDate(calcurated.getDate() + daysAfter);
+
+        // 土日や祝日等の考慮
+        while (true) {
+          // 土日または祝日等に該当し、日付を進めた場合、再度評価するためフラグを設定する
+          let proceedingHappened = false;
+
+          // 土日をスキップする
+          if (skipWeekends) {
+            while (true) {
+              if (calcurated.getDay() === 0 || calcurated.getDay() === 6) {
+                calcurated.setDate(calcurated.getDate() + 1);
+                proceedingHappened = true;
+              } else {
+                break;
+              }
+            }
+          }
+          // 祝日リストに含まれていれば翌日にする（繰り返して、祝日リストに含まれない日まで実行）
+          while (true) {
+            let tmpDateStr = calcurated.toISOString().substring(0, 10);
+            if (holidaysArray.includes(tmpDateStr)) {
+              calcurated.setDate(calcurated.getDate() + 1);
+              proceedingHappened = true;
+            } else {
+              break;
+            }
+          }
+          // 土日または祝日等に該当しなかった場合は評価を終了
+          if (!proceedingHappened) {
+            break;
+          }
+        }
+
+        // 日付形式を指定し、文字列で返す
+        return new Intl.DateTimeFormat("ja-JP", {
+          dateStyle: datestyle,
+          timeZone: "Asia/Tokyo",
+        }).format(calcurated);
+      })(today, holidays, daysAfter, skipWeekends, datestyle);
+
+      // 文章を接続して作成
+      let preDescEl =
+        "<span class='pre-description'>" + preDescription ?? "" + "</span>";
+      let postDescEl =
+        "<span class='post-description'>" + postDescription ?? "" + "</span>";
+      let calculatedDateEl =
+        "<span class='calcurated-date'>" + calcuratedDate + "</span>";
+
+      // 外枠に入れて返す
+      return (
+        "<div class='parent-container'>" +
+        preDescEl +
+        calculatedDateEl +
+        postDescEl +
+        "</div>"
+      );
+    }
+  })();
+</script>

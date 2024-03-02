@@ -1,0 +1,16 @@
+{
+  "name": "Node.js & TypeScript",
+  "dockerFile": "Dockerfile",
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/typescript:2": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "Gruntfuggly.todo-tree",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  }
+}
