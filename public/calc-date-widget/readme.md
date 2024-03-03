@@ -51,7 +51,7 @@
       id="widgetPlaceholder"
       data-today="2024-03-04"
       data-days-after="5"
-      data-skip-weekends="false"
+      data-skip-weekends="true"
       data-holidays="2024-01-01,2024-01-02,2024-01-03,2024-03-11,2024-03-12,2024-03-13,2024-03-14,2024-03-15"
       data-title="お知らせ"
       data-pre-description="この届け出は"
