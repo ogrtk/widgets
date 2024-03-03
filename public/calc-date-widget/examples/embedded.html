@@ -20,7 +20,7 @@
     表示する文章の前部分 + 計算結果の日付 + 表示する文章の後部分
 -->
 <div
-  id="widget-placeholder"
+  id="widgetPlaceholder"
   data-today="2024-03-04"
   data-days-after="5"
   data-skip-weekends="false"
@@ -125,7 +125,7 @@
     "use strict";
 
     // プレースホルダからパラメータを取得し、非表示にする
-    let placeholder = document.getElementById("widget-placeholder");
+    let placeholder = document.getElementById("widgetPlaceholder");
     let holidays = placeholder.dataset.holidays;
     let today = placeholder.dataset.today;
     let daysAfter = Number(placeholder.dataset.daysAfter);

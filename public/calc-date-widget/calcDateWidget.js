@@ -7,7 +7,7 @@
   "use strict";
 
   // プレースホルダからパラメータを取得し、非表示にする
-  let placeholder = document.getElementById("widget-placeholder");
+  let placeholder = document.getElementById("widgetPlaceholder");
   let holidays = placeholder.dataset.holidays;
   let today = placeholder.dataset.today;
   let daysAfter = Number(placeholder.dataset.daysAfter);
