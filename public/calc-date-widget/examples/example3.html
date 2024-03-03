@@ -26,12 +26,15 @@
   data-date-format="full"
   data-iframe-classname="widget-iframe"
   data-iframe-innerstyles-id="innerStyles"
-></div>
+>
+  widget should be rendered here, put alternative text in case of failure.
+  <!-- ここにウィジェットが表示されます。表示されない場合の代替テキストを設定します。 -->
+</div>
 
 <style id="innerStyles">
-  /*
+  /* 
     文字部分のスタイルをここで設定します
-    style要素のIDは、data-iframe-innerstyles-idと一致するようにしてください
+    style要素のIDは、data-iframe-innerstyles-idと一致するようにしてください 
 
     widgetは次のようなhtmlで構成されます
     <div class="container">
@@ -41,23 +44,30 @@
         <span class="calcurated-date">日付</span>
         <span class="post-description">postdescription</span>
       </div>
-    </div>
+    </div> 
   */
 
   /* 全体枠 */
   .container {
-    position: relative;
-    border: 3px solid #0f7e40;
-    border-radius: 10px;
-    padding: 10px;
+    margin: 2em 0;
+    background: #e4f4eb;
   }
   /* タイトル */
   .title {
-    display: none;
+    display: block;
+    font-size: 1.2em;
+    background: #0f7e40;
+    padding: 4px;
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
+    letter-spacing: 0.05em;
   }
   /* 文章全体 */
   .description {
     text-align: center;
+    padding: 15px 20px;
+    margin: 0;
   }
   /* 前後の文章 */
   .pre-description,

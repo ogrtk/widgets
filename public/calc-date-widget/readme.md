@@ -12,7 +12,11 @@
 
   - [例 1(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/example1.html)
   - [例 2(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/example2.html)
-  - [例 3(script 組み込み版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/embedded.html)
+  - [例 3(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/example3.html)
+  - [例 4(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/example4.html)
+  - [例 5(script 組み込み版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/embedded.html)
+
+    - なお、example2,example3 の内容は、[こちらのサイト](https://saruwakakun.com/html-css/reference/css-sample)を参考にしたものとなっています
 
 ## 使い方
 
@@ -26,9 +30,31 @@
     - script ごとまるまるコピーして使います
     - 作者が script の公開を終了しても影響を受けません。
 
-- html へウィジェット用の配置場所を用意
+- いずれの方法においても、`examples`フォルダ以下のファイルの内容をまるごとコピーし、あなたの html ファイルに取り入れることをおすすめします
 
-  - div 要素としてプレースホルダとなる要素を用意します
+  - コピー方法
+
+    - script 参照版の場合、`example1.html`または`example2.html`の内容をコピーしてください
+    - script 組み込み版の場合、`embedded.html`の内容をコピーしてください
+
+  - パラメータの調整
+    - コピーした内容には、冒頭にウィジェット配置用の div 要素が記載されています。この div 要素に様々な data 属性を定義することで、利用用途にあった表示となるよう設定が可能です
+    - 主要なパラメータとして以下を設定してください
+      - `data-today` 空にします（現在日がシステム日付となります）
+      - `data-days-after` 計算したい n 日後の n の数値を設定します
+      - `data-skip-weekends` true に設定した場合、計算後の日付が土日にあたる場合、次の営業日まで進めた日付となります
+      - `data-holidays` 祝日リスト。祝日などを yyyy-mm-dd 形式、カンマ区切りで複数設定します。計算後の日付がこのリストに含まれる場合、翌日に進めます。（例："2024-12-30,2024-12-31,2025-01-01,2025-01-01,2025-01-02,2025-01-03"
+      - `data-title` タイトルとして表示する文字列を設定します
+      - `data-pre-description`、`data-pre-description` : 日付の前後に表示する文章の文言を設定します。
+      - `data-date-format` 日付の表示形式。full…yyyy 年 m 月 d 日と曜日、long…yyyy 年 m 月 d 日、short…yyyy/mm/dd
+    - 必要に応じて、style 要素の内容を編集し、見た目を調整してください。
+
+- 詳細な手順は以下のとおりです
+
+  - div 要素としてプレースホルダとなる要素を用意します。
+
+    - html ファイル中で一意の id を付与してください。この id は、後述の script 要素の data 属性として設定するようにしてください。
+    - この要素に、様々な data 属性としてパラメータを設定します。
 
     ```html
     <!--
@@ -36,7 +62,7 @@
       data-xxxxx の属性を編集し、必要なパラメータを設定する
       ・data-today : 現在日として扱う日付をyyyy-mm-dd形式で設定する。基本的に設定しなくて良い（空にする）。動作確認用。
       ・data-days-after : 現在日＋ここで設定する日数後の日付を計算する。マイナスも設定可。
-      ・data-skip-weekends : trueに設定した場合、計算後の日付が土日にあたる場合、次の月曜日まで進めた日付とする
+      ・data-skip-weekends : trueに設定した場合、計算後の日付が土日にあたる場合、次の営業日まで進めた日付とする
       ・data-holidays : 祝日リスト。祝日などをyyyy-mm-dd形式、カンマ区切りで複数設定する。計算後の日付がこのリストに含まれる場合、翌日に進める。
       ・data-title : タイトル
       ・data-pre-description : 表示する文章の前部分
@@ -63,8 +89,6 @@
     ```
 
   - 適用するスタイルを用意します
-
-    - なお、example2 の内容は、[こちらのサイト](https://saruwakakun.com/html-css/reference/box#google_vignette)を参考にしたものとなっています
 
     ```html
     <style id="innerStyles">
