@@ -1,3 +1,7 @@
+<!-- 
+  n日後 日付計算結果メッセージ表示ウィジェット
+-->
+
 <!--
   プレースホルダ。実行時には非表示となる
   data-xxxxx の属性を編集し、必要なパラメータを設定する
@@ -7,7 +11,9 @@
   ・data-holidays : 祝日リスト。祝日などをyyyy-mm-dd形式、カンマ区切りで複数設定する。計算後の日付がこのリストに含まれる場合、翌日に進める。
   ・data-pre-description : 表示する文章の前部分
   ・data-pre-description : 表示する文章の後部分
-  ・data-datestyle : 日付の表示形式。full…yyyy年m月d日と曜日、long…yyyy年m月d日、short…yyyy/mm/dd
+  ・data-date-format : 日付の表示形式。full…yyyy年m月d日と曜日、long…yyyy年m月d日、short…yyyy/mm/dd
+  ・data-iframe-classname : widget配置するiflameのスタイルを指定するCSSクラス名　※他html要素との重複がなければ変更不要
+  ・data-iframe-innerstyles-id : widget内のスタイルを定義するstyle要素のid　※他html要素との重複がなければ変更不要
   ※次のように文章が表示される
     表示する文章の前部分 + 計算結果の日付 + 表示する文章の後部分
 -->
@@ -15,18 +21,22 @@
   id="widget-placeholder"
   data-today="2024-03-04"
   data-days-after="5"
-  data-skip-weekends="true"
+  data-skip-weekends="false"
   data-holidays="2024-01-01,2024-01-02,2024-01-03,2024-03-11,2024-03-12,2024-03-13,2024-03-14,2024-03-15"
   data-pre-description="この届け出は"
   data-post-description="以降に提出可能です。"
-  data-datestyle="short"
+  data-date-format="full"
+  data-iframe-classname="widget-iframe"
+  data-iframe-innerstyles-id="innerStyles"
 >
   widget should be rendered here, put alternative text in case of failure.
   <!-- ここにウィジェットが表示されます。表示されない場合の代替テキストを設定します。 -->
 </div>
 
-<!-- 文字部分のスタイルをここで設定します -->
-<style id="custom-styles">
+<style id="innerStyles">
+  /* 文字部分のスタイルをここで設定します
+     style要素のIDは、data-iframe-innerstyles-idと一致するようにしてください */
+
   /* 前後の文章 */
   .pre-description,
   .post-description {
@@ -36,8 +46,9 @@
   /* 日付 */
   .calcurated-date {
     font-size: 1.5em;
-    font-weight: 500;
+    font-weight: 800;
     color: red;
+    padding: 0px 10px 0px 10px;
   }
   /* 文章の配置設定 */
   .parent-container {
@@ -45,10 +56,12 @@
   }
 </style>
 
-<!-- 枠部分のスタイルをここで設定します -->
 <style>
+  /* 枠部分のスタイルをここで設定します 
+     クラス名は、data-iframe-classnameと一致するようにしてください */
+
   /* 枠となるiframe */
-  .date-counter-view {
+  .widget-iframe {
     border: solid 2px;
     border-color: gray;
     width: 100%;
@@ -73,15 +86,17 @@
     let today = placeholder.dataset.today;
     let daysAfter = Number(placeholder.dataset.daysAfter);
     let skipWeekends = placeholder.dataset.skipWeekends === "true";
-    let datestyle = placeholder.dataset.datestyle;
+    let dateFormat = placeholder.dataset.dateFormat;
     let preDescription = placeholder.dataset.preDescription;
     let postDescription = placeholder.dataset.postDescription;
+    let iframeClassname = placeholder.dataset.iframeClassname;
+    let iframeInnerstylesId = placeholder.dataset.iframeInnerstylesId;
     placeholder.style.display = "none";
 
     // iframeを作成
     let iframe = document.createElement("iframe");
     iframe.scrolling = "no";
-    iframe.classList.add("date-counter-view");
+    iframe.classList.add(iframeClassname);
     iframe.addEventListener("load", (e) => {
       // 高さ自動調節
       e.currentTarget.style.height =
@@ -99,14 +114,14 @@
       skipWeekends,
       preDescription,
       postDescription,
-      datestyle
+      dateFormat
     );
 
     // iframe内htmlとしてwidgetを設定
     let doc = iframe.contentWindow.document;
     doc.open();
     doc.write(widget);
-    doc.head.appendChild(document.getElementById("custom-styles"));
+    doc.head.appendChild(document.getElementById(iframeInnerstylesId));
     doc.close();
 
     /**
@@ -126,7 +141,7 @@
         holidays,
         daysAfter,
         skipWeekends,
-        datestyle
+        dateFormat
       ) => {
         // 祝日リストをカンマで分割・空白を除去し、配列に格納
         let holidaysArray = holidays
@@ -172,7 +187,7 @@
 
         // 日付形式を指定し、文字列で返す
         return new Intl.DateTimeFormat("ja-JP", {
-          dateStyle: datestyle,
+          dateStyle: dateFormat,
           timeZone: "Asia/Tokyo",
         }).format(calcurated);
       })(today, holidays, daysAfter, skipWeekends, datestyle);
