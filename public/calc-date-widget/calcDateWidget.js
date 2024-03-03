@@ -2,22 +2,24 @@
  * n日後 日付計算結果メッセージ表示ウィジェット用スクリプト v1.0
  * - v1.0 2024/03/03
  */
-
 (function () {
   "use strict";
 
+  const script = document.querySelectorAll('[data-widget-script="true"]')[0];
+  const placeholderId = script.dataset.placeholderId;
+
   // プレースホルダからパラメータを取得し、非表示にする
-  let placeholder = document.getElementById("widgetPlaceholder");
-  let holidays = placeholder.dataset.holidays;
-  let today = placeholder.dataset.today;
-  let daysAfter = Number(placeholder.dataset.daysAfter);
-  let skipWeekends = placeholder.dataset.skipWeekends === "true";
-  let dateFormat = placeholder.dataset.dateFormat;
-  let title = placeholder.dataset.title;
-  let preDescription = placeholder.dataset.preDescription;
-  let postDescription = placeholder.dataset.postDescription;
-  let iframeClassname = placeholder.dataset.iframeClassname;
-  let iframeInnerstylesId = placeholder.dataset.iframeInnerstylesId;
+  const placeholder = document.getElementById(placeholderId);
+  const holidays = placeholder.dataset.holidays;
+  const today = placeholder.dataset.today;
+  const daysAfter = Number(placeholder.dataset.daysAfter);
+  const skipWeekends = placeholder.dataset.skipWeekends === "true";
+  const dateFormat = placeholder.dataset.dateFormat;
+  const title = placeholder.dataset.title;
+  const preDescription = placeholder.dataset.preDescription;
+  const postDescription = placeholder.dataset.postDescription;
+  const iframeClassname = placeholder.dataset.iframeClassname;
+  const iframeInnerstylesId = placeholder.dataset.iframeInnerstylesId;
   placeholder.style.display = "none";
 
   // iframeを作成
