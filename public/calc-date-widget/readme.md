@@ -10,9 +10,9 @@
 
 - 使用例
 
-  - [例 1(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/example/example1.html)
-  - [例 2(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/example/example2.html)
-  - [例 3(script 組み込み版)](https://ogrtk.github.io/widgets/public/calc-date-widget/example/embedded.html)
+  - [例 1(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/example1.html)
+  - [例 2(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/example2.html)
+  - [例 3(script 組み込み版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/embedded.html)
 
 ## 使い方
 
