@@ -1,0 +1,102 @@
+<!--
+  プレースホルダ。実行時には非表示となる
+  data-xxxxx の属性を編集し、必要なパラメータを設定する
+  ・data-today : 現在日として扱う日付をyyyy-mm-dd形式で設定する。基本的に設定しなくて良い（空にする）。動作確認用。
+  ・data-days-after : 現在日＋ここで設定する日数後の日付を計算する。マイナスも設定可。
+  ・data-skip-weekends : trueに設定した場合、計算後の日付が土日にあたる場合、次の月曜日まで進めた日付とする
+  ・data-holidays : 祝日リスト。祝日などをyyyy-mm-dd形式、カンマ区切りで複数設定する。計算後の日付がこのリストに含まれる場合、翌日に進める。
+  ・data-title : タイトル
+  ・data-pre-description : 表示する文章の前部分
+  ・data-pre-description : 表示する文章の後部分
+  ・data-date-format : 日付の表示形式。full…yyyy年m月d日と曜日、long…yyyy年m月d日、short…yyyy/mm/dd
+  ・data-iframe-classname : widget配置するiflameのスタイルを指定するCSSクラス名　※他html要素との重複がなければ変更不要
+  ・data-iframe-innerstyles-id : widget内のスタイルを定義するstyle要素のid　※他html要素との重複がなければ変更不要
+  ※次のように文章が表示される
+    表示する文章の前部分 + 計算結果の日付 + 表示する文章の後部分
+-->
+<div
+  id="widget-placeholder"
+  data-today="2024-03-04"
+  data-days-after="5"
+  data-skip-weekends="false"
+  data-holidays="2024-01-01,2024-01-02,2024-01-03,2024-03-11,2024-03-12,2024-03-13,2024-03-14,2024-03-15"
+  data-title="お知らせ"
+  data-pre-description="この届け出は"
+  data-post-description="以降に提出可能です。"
+  data-date-format="full"
+  data-iframe-classname="widget-iframe"
+  data-iframe-innerstyles-id="innerStyles"
+></div>
+
+<style id="innerStyles">
+  /* 
+    文字部分のスタイルをここで設定します
+    style要素のIDは、data-iframe-innerstyles-idと一致するようにしてください 
+
+    widgetは次のようなhtmlで構成されます
+    <div class="container">
+      <span class="title">title</span>
+      <div class="description">
+        <span class="pre-description">predescription</span>
+        <span class="calcurated-date">日付</span>
+        <span class="post-description">postdescription</span>
+      </div>
+    </div> 
+  */
+
+  /* 全体枠 */
+  .container {
+    position: relative;
+    margin: 2em 0;
+    padding: 0.5em 1em;
+    border: solid 3px #62c1ce;
+  }
+  /* タイトル */
+  .title {
+    position: absolute;
+    display: inline-block;
+    top: -27px;
+    left: -3px;
+    padding: 0 9px;
+    height: 25px;
+    line-height: 25px;
+    font-size: 17px;
+    background: #62c1ce;
+    color: #ffffff;
+    font-weight: bold;
+    border-radius: 5px 5px 0 0;
+  }
+  /* 文章全体 */
+  .description {
+    text-align: center;
+  }
+  /* 前後の文章 */
+  .pre-description,
+  .post-description {
+    font-size: 1em;
+    color: gray;
+  }
+  /* 日付 */
+  .calcurated-date {
+    font-size: 1.5em;
+    font-weight: 800;
+    color: red;
+    padding: 0px 10px 0px 10px;
+  }
+</style>
+
+<style>
+  /* 枠部分のスタイルをここで設定します
+     クラス名は、data-iframe-classnameと一致するようにしてください */
+
+  /* 枠となるiframe */
+  .widget-iframe {
+    border: solid 3px;
+    border-color: gray;
+    padding: 0px;
+    width: 100%;
+    height: 0px; /*heightは必ず0pxにしておくこと（内容によって自動調整されますが、高さがないと150pxになってしまうため）*/
+  }
+</style>
+
+<script src="https://ogrtk.github.io/widgets/public/calc-date-widget/calcDateWidget.js"></script>

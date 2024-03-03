@@ -13,6 +13,7 @@
   let daysAfter = Number(placeholder.dataset.daysAfter);
   let skipWeekends = placeholder.dataset.skipWeekends === "true";
   let dateFormat = placeholder.dataset.dateFormat;
+  let title = placeholder.dataset.title;
   let preDescription = placeholder.dataset.preDescription;
   let postDescription = placeholder.dataset.postDescription;
   let iframeClassname = placeholder.dataset.iframeClassname;
@@ -38,6 +39,7 @@
     today,
     daysAfter,
     skipWeekends,
+    title,
     preDescription,
     postDescription,
     dateFormat
@@ -58,6 +60,7 @@
     today,
     daysAfter,
     skipWeekends,
+    title,
     preDescription,
     postDescription,
     datestyle
@@ -119,20 +122,25 @@
     })(today, holidays, daysAfter, skipWeekends, datestyle);
 
     // 文章を接続して作成
+    let titleEl = "<span class='title'>" + (title ?? "") + "</span>";
     let preDescEl =
-      "<span class='pre-description'>" + preDescription ?? "" + "</span>";
-    let postDescEl =
-      "<span class='post-description'>" + postDescription ?? "" + "</span>";
+      "<span class='pre-description'>" + (preDescription ?? "") + "</span>";
     let calculatedDateEl =
       "<span class='calcurated-date'>" + calcuratedDate + "</span>";
+    let postDescEl =
+      "<span class='post-description'>" + (postDescription ?? "") + "</span>";
 
     // 外枠に入れて返す
-    return (
-      "<div class='parent-container'>" +
+    let returnStr =
+      "<div class='container'>" +
+      titleEl +
+      "<div class='description'>" +
       preDescEl +
       calculatedDateEl +
       postDescEl +
-      "</div>"
-    );
+      "</div>" +
+      "</div>";
+
+    return returnStr;
   }
 })();
