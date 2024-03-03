@@ -37,9 +37,9 @@
 </div>
 
 <style id="innerStyles">
-  /* 
+  /*
     文字部分のスタイルをここで設定します
-    style要素のIDは、data-iframe-innerstyles-idと一致するようにしてください 
+    style要素のIDは、data-iframe-innerstyles-idと一致するようにしてください
 
     widgetは次のようなhtmlで構成されます
     <div class="container">
@@ -49,36 +49,23 @@
         <span class="calcurated-date">日付</span>
         <span class="post-description">postdescription</span>
       </div>
-    </div> 
+    </div>
   */
 
   /* 全体枠 */
   .container {
     position: relative;
-    margin: 2em 0;
-    padding: 0.5em 1em;
-    border: solid 3px #62c1ce;
+    border: 3px solid #0f7e40;
+    border-radius: 10px;
+    padding: 10px;
   }
   /* タイトル */
   .title {
-    position: absolute;
-    display: inline-block;
-    top: -27px;
-    left: -3px;
-    padding: 0 9px;
-    height: 25px;
-    line-height: 25px;
-    font-size: 17px;
-    background: #62c1ce;
-    color: #ffffff;
-    font-weight: bold;
-    border-radius: 5px 5px 0 0;
+    display: none;
   }
   /* 文章全体 */
   .description {
     text-align: center;
-    margin: 0;
-    padding: 0;
   }
   /* 前後の文章 */
   .pre-description,

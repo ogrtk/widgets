@@ -16,7 +16,7 @@
   - [例 4(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/example4.html)
   - [例 5(script 組み込み版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/embedded.html)
 
-    - なお、example2,example3 の内容は、[こちらのサイト](https://saruwakakun.com/html-css/reference/css-sample)を参考にしたものとなっています
+    - なお、example2〜4 の内容は、[こちらのサイト](https://saruwakakun.com/html-css/reference/css-sample)を参考にしたものとなっています
 
 ## 使い方
 
