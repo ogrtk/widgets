@@ -6,53 +6,64 @@
   "use strict";
 
   const script = document.querySelectorAll('[data-widget-script="true"]')[0];
-  const placeholderId = script.dataset.placeholderId;
-
-  // プレースホルダからパラメータを取得し、非表示にする
-  const placeholder = document.getElementById(placeholderId);
-  const holidays = placeholder.dataset.holidays;
-  const today = placeholder.dataset.today;
-  const daysAfter = Number(placeholder.dataset.daysAfter);
-  const skipWeekends = placeholder.dataset.skipWeekends === "true";
-  const dateFormat = placeholder.dataset.dateFormat;
-  const title = placeholder.dataset.title;
-  const preDescription = placeholder.dataset.preDescription;
-  const postDescription = placeholder.dataset.postDescription;
-  const iframeClassname = placeholder.dataset.iframeClassname;
-  const iframeInnerstylesId = placeholder.dataset.iframeInnerstylesId;
-  placeholder.style.display = "none";
-
-  // iframeを作成
-  let iframe = document.createElement("iframe");
-  iframe.scrolling = "no";
-  iframe.classList.add(iframeClassname);
-  iframe.addEventListener("load", (e) => {
-    // 高さ自動調節
-    e.currentTarget.style.height =
-      e.currentTarget.contentWindow.document.body.scrollHeight + "px";
+  const placeholderIds = script.dataset.placeholderIds
+    .split(",")
+    .filter((item) => item)
+    .map((item) => item.trim());
+  placeholderIds.forEach((placeholderId) => {
+    setWidget(placeholderId);
   });
 
-  // iframeを設置
-  placeholder.parentNode.insertBefore(iframe, placeholder);
+  /**
+   * プレースホルダにウィジェットを設定
+   */
+  function setWidget(placeholderId) {
+    // プレースホルダからパラメータを取得し、非表示にする
+    const placeholder = document.getElementById(placeholderId);
+    const holidays = placeholder.dataset.holidays;
+    const today = placeholder.dataset.today;
+    const daysAfter = Number(placeholder.dataset.daysAfter);
+    const skipWeekends = placeholder.dataset.skipWeekends === "true";
+    const dateFormat = placeholder.dataset.dateFormat;
+    const title = placeholder.dataset.title;
+    const preDescription = placeholder.dataset.preDescription;
+    const postDescription = placeholder.dataset.postDescription;
+    const iframeClassname = placeholder.dataset.iframeClassname;
+    const iframeInnerstylesId = placeholder.dataset.iframeInnerstylesId;
+    placeholder.style.display = "none";
 
-  // widgetの中身を作成
-  let widget = constructWidget(
-    holidays,
-    today,
-    daysAfter,
-    skipWeekends,
-    title,
-    preDescription,
-    postDescription,
-    dateFormat
-  );
+    // iframeを作成
+    let iframe = document.createElement("iframe");
+    iframe.scrolling = "no";
+    iframe.classList.add(iframeClassname);
+    iframe.addEventListener("load", (e) => {
+      // 高さ自動調節
+      e.currentTarget.style.height =
+        e.currentTarget.contentWindow.document.body.scrollHeight + "px";
+    });
 
-  // iframe内htmlとしてwidgetを設定
-  let doc = iframe.contentWindow.document;
-  doc.open();
-  doc.write(widget);
-  doc.head.appendChild(document.getElementById(iframeInnerstylesId));
-  doc.close();
+    // iframeを設置
+    placeholder.parentNode.insertBefore(iframe, placeholder);
+
+    // widgetの中身を作成
+    let widget = constructWidget(
+      holidays,
+      today,
+      daysAfter,
+      skipWeekends,
+      title,
+      preDescription,
+      postDescription,
+      dateFormat
+    );
+
+    // iframe内htmlとしてwidgetを設定
+    let doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(widget);
+    doc.head.appendChild(document.getElementById(iframeInnerstylesId));
+    doc.close();
+  }
 
   /**
    * widgetの内容

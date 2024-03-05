@@ -10,11 +10,13 @@
 
 - 使用例
 
-  - [例 1(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/example1.html)
-  - [例 2(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/example2.html)
-  - [例 3(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/example3.html)
-  - [例 4(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/example4.html)
-  - [例 5(script 組み込み版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/embedded.html)
+  - [例 1(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/reference1.html)
+  - [例 2(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/reference2.html)
+  - [例 3(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/reference3.html)
+  - [例 4(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/reference4.html)
+  - [例 5(script 参照版、複数設置)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/reference-multi.html)
+  - [例 6(script 組み込み版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/embedded.html)
+  - [例 7(script 組み込み版、複数設置)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/embedded-multi.html)
 
     - なお、example2〜4 の内容は、[こちらのサイト](https://saruwakakun.com/html-css/reference/css-sample)を参考にしたものとなっています
 
@@ -187,19 +189,14 @@
   - script 組み込み版の場合
 
     ```html
-    <!--
-      設定の反映処理
+    <!-- 
+      設定の反映処理 
       ・必ずdata-widget-script="true"としてください
-      ・data-placeholder-idにはプレースホルダ要素のidを設定してください
+      ・data-placeholder-idにはプレースホルダ要素のidを設定してください。複数ある場合、カンマ区切りで指定してください
     -->
-    <script data-widget-script="true" data-placeholder-id="widgetPlaceholder">
+    <script data-widget-script="true" data-placeholder-ids="widgetPlaceholder">
       /**
        *  注意 ここから先は原則として変更しないこと
-       */
-
-      /**
-       * n日後 日付計算結果メッセージ表示ウィジェット用スクリプト v1.0
-       * - v1.0 2024/03/03
        */
 
       (function () {
@@ -208,53 +205,64 @@
         const script = document.querySelectorAll(
           '[data-widget-script="true"]'
         )[0];
-        const placeholderId = script.dataset.placeholderId;
-
-        // プレースホルダからパラメータを取得し、非表示にする
-        const placeholder = document.getElementById(placeholderId);
-        const holidays = placeholder.dataset.holidays;
-        const today = placeholder.dataset.today;
-        const daysAfter = Number(placeholder.dataset.daysAfter);
-        const skipWeekends = placeholder.dataset.skipWeekends === "true";
-        const dateFormat = placeholder.dataset.dateFormat;
-        const title = placeholder.dataset.title;
-        const preDescription = placeholder.dataset.preDescription;
-        const postDescription = placeholder.dataset.postDescription;
-        const iframeClassname = placeholder.dataset.iframeClassname;
-        const iframeInnerstylesId = placeholder.dataset.iframeInnerstylesId;
-        placeholder.style.display = "none";
-
-        // iframeを作成
-        let iframe = document.createElement("iframe");
-        iframe.scrolling = "no";
-        iframe.classList.add(iframeClassname);
-        iframe.addEventListener("load", (e) => {
-          // 高さ自動調節
-          e.currentTarget.style.height =
-            e.currentTarget.contentWindow.document.body.scrollHeight + "px";
+        const placeholderIds = script.dataset.placeholderIds
+          .split(",")
+          .filter((item) => item)
+          .map((item) => item.trim());
+        placeholderIds.forEach((placeholderId) => {
+          setWidget(placeholderId);
         });
 
-        // iframeを設置
-        placeholder.parentNode.insertBefore(iframe, placeholder);
+        /**
+         * プレースホルダにウィジェットを設定
+         */
+        function setWidget(placeholderId) {
+          // プレースホルダからパラメータを取得し、非表示にする
+          const placeholder = document.getElementById(placeholderId);
+          const holidays = placeholder.dataset.holidays;
+          const today = placeholder.dataset.today;
+          const daysAfter = Number(placeholder.dataset.daysAfter);
+          const skipWeekends = placeholder.dataset.skipWeekends === "true";
+          const dateFormat = placeholder.dataset.dateFormat;
+          const title = placeholder.dataset.title;
+          const preDescription = placeholder.dataset.preDescription;
+          const postDescription = placeholder.dataset.postDescription;
+          const iframeClassname = placeholder.dataset.iframeClassname;
+          const iframeInnerstylesId = placeholder.dataset.iframeInnerstylesId;
+          placeholder.style.display = "none";
 
-        // widgetの中身を作成
-        let widget = constructWidget(
-          holidays,
-          today,
-          daysAfter,
-          skipWeekends,
-          title,
-          preDescription,
-          postDescription,
-          dateFormat
-        );
+          // iframeを作成
+          let iframe = document.createElement("iframe");
+          iframe.scrolling = "no";
+          iframe.classList.add(iframeClassname);
+          iframe.addEventListener("load", (e) => {
+            // 高さ自動調節
+            e.currentTarget.style.height =
+              e.currentTarget.contentWindow.document.body.scrollHeight + "px";
+          });
 
-        // iframe内htmlとしてwidgetを設定
-        let doc = iframe.contentWindow.document;
-        doc.open();
-        doc.write(widget);
-        doc.head.appendChild(document.getElementById(iframeInnerstylesId));
-        doc.close();
+          // iframeを設置
+          placeholder.parentNode.insertBefore(iframe, placeholder);
+
+          // widgetの中身を作成
+          let widget = constructWidget(
+            holidays,
+            today,
+            daysAfter,
+            skipWeekends,
+            title,
+            preDescription,
+            postDescription,
+            dateFormat
+          );
+
+          // iframe内htmlとしてwidgetを設定
+          let doc = iframe.contentWindow.document;
+          doc.open();
+          doc.write(widget);
+          doc.head.appendChild(document.getElementById(iframeInnerstylesId));
+          doc.close();
+        }
 
         /**
          * widgetの内容
