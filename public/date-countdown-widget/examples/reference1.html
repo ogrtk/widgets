@@ -2,39 +2,34 @@
   プレースホルダ。実行時には非表示となる
   data-xxxxx の属性を編集し、必要なパラメータを設定する
   ・data-today : 現在日として扱う日付をyyyy-mm-dd形式で設定する。基本的に設定しなくて良い（空にする）。動作確認用。
-  ・data-days-after : 現在日＋ここで設定する日数後の日付を計算する。マイナスも設定可。
-  ・data-skip-weekends : trueに設定した場合、計算後の日付が土日にあたる場合、次の営業日まで進めた日付とする
-  ・data-holidays : 祝日リスト。祝日などをyyyy-mm-dd形式、カンマ区切りで複数設定する。計算後の日付がこのリストに含まれる場合、翌日に進める。
+  ・data-target-date : 対象の日付をyyyy-mm-dd形式で設定する。この日付までの日数をカウントして表示する。
   ・data-title : タイトル
   ・data-pre-description : 表示する文章の前部分
+  ・data-pre-count : 表示する日数の直前の文言
+  ・data-post-count : 表示する日数の直後の文言
   ・data-post-description : 表示する文章の後部分
-  ・data-date-format : 日付の表示形式。full…yyyy年m月d日と曜日、long…yyyy年m月d日、short…yyyy/mm/dd
+  ・data-hide-at : カウント結果がここで指定する数以下になった場合、ウィジェットを表示しない。（0日になったら表示しないなどの使い方）
   ・data-iframe-classname : widget配置するiflameのスタイルを指定するCSSクラス名　※他html要素との重複がなければ変更不要
   ・data-iframe-innerstyles-id : widget内のスタイルを定義するstyle要素のid　※他html要素との重複がなければ変更不要
-  ※次のように文章が表示される
-    表示する文章の前部分 + 計算結果の日付 + 表示する文章の後部分
 -->
 <div
   id="widgetPlaceholder"
-  data-today="2024-03-04"
-  data-days-after="5"
-  data-skip-weekends="true"
-  data-holidays="2024-01-01,2024-01-02,2024-01-03,2024-03-11,2024-03-12,2024-03-13,2024-03-14,2024-03-15"
+  data-today="2024-03-01"
+  data-target-date="2024-03-31"
   data-title="お知らせ"
-  data-pre-description="この届け出は"
-  data-post-description="以降に提出可能です。"
-  data-date-format="full"
+  data-pre-description="イベントまで、"
+  data-pre-count="あと"
+  data-post-count="日"
+  data-post-description="です。"
+  data-hide-at="0"
   data-iframe-classname="widget-iframe"
   data-iframe-innerstyles-id="innerStyles"
->
-  widget should be rendered here, put alternative text in case of failure.
-  <!-- ここにウィジェットが表示されます。表示されない場合の代替テキストを設定します。 -->
-</div>
+></div>
 
 <style id="innerStyles">
-  /* 
+  /*
     文字部分のスタイルをここで設定します
-    style要素のIDは、data-iframe-innerstyles-idと一致するようにしてください 
+    style要素のIDは、data-iframe-innerstyles-idと一致するようにしてください
 
     widgetは次のようなhtmlで構成されます
     <div class="container">
@@ -44,41 +39,35 @@
         <span class="calcurated-date">日付</span>
         <span class="post-description">postdescription</span>
       </div>
-    </div> 
+    </div>
   */
 
   /* 全体枠 */
   .container {
     position: relative;
-    margin: 2em 0;
-    padding: 25px 10px 7px;
-    border: solid 3px #0f7e40;
+    border: 3px solid #0f7e40;
+    border-radius: 10px;
+    padding: 10px;
   }
   /* タイトル */
   .title {
-    position: absolute;
-    display: inline-block;
-    top: -2px;
-    left: -2px;
-    padding: 0 9px;
-    height: 25px;
-    line-height: 25px;
-    font-size: 17px;
-    background: #0f7e40;
-    color: #ffffff;
-    font-weight: bold;
+    display: none;
   }
   /* 文章全体 */
   .description {
     text-align: center;
-    margin: 0;
-    padding: 0;
   }
   /* 前後の文章 */
   .pre-description,
   .post-description {
     font-size: 1em;
     color: gray;
+  }
+  /* 日数の前後 */
+  .pre-count,
+  .post-count {
+    font-size: 1em;
+    color: red;
   }
   /* 日付 */
   .calcurated-date {
@@ -106,10 +95,10 @@
 <!-- 
   設定の反映処理 
   ・必ずdata-widget-script="true"としてください
-  ・data-placeholder-idsにはプレースホルダ要素のidを設定してください。複数ある場合、カンマ区切りで指定してください
+  ・data-placeholder-idにはプレースホルダ要素のidを設定してください。複数ある場合、カンマ区切りで指定してください
 -->
 <script
-  src="https://ogrtk.github.io/widgets/public/calc-date-widget/calcDateWidget.js"
+  src="https://ogrtk.github.io/widgets/public/date-countdown-widget/dateCountdownWidget.js"
   data-widget-script="true"
   data-placeholder-ids="widgetPlaceholder"
 ></script>

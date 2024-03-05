@@ -1,34 +1,32 @@
 <!-- 
-  n日後 日付計算結果メッセージ表示ウィジェット組み込み版 v1.0
-  - v1.0 2024/03/03
+  あとn日 残日数メッセージ表示ウィジェット組み込み版 v1.0
+  - v1.0 2024/03/05
 -->
 
 <!--
   プレースホルダ。実行時には非表示となる
   data-xxxxx の属性を編集し、必要なパラメータを設定する
   ・data-today : 現在日として扱う日付をyyyy-mm-dd形式で設定する。基本的に設定しなくて良い（空にする）。動作確認用。
-  ・data-days-after : 現在日＋ここで設定する日数後の日付を計算する。マイナスも設定可。
-  ・data-skip-weekends : trueに設定した場合、計算後の日付が土日にあたる場合、次の営業日まで進めた日付とする
-  ・data-holidays : 祝日リスト。祝日などをyyyy-mm-dd形式、カンマ区切りで複数設定する。計算後の日付がこのリストに含まれる場合、翌日に進める。
+  ・data-target-date : 対象の日付をyyyy-mm-dd形式で設定する。この日付までの日数をカウントして表示する。
   ・data-title : タイトル
   ・data-pre-description : 表示する文章の前部分
+  ・data-pre-count : 表示する日数の直前の文言
+  ・data-post-count : 表示する日数の直後の文言
   ・data-post-description : 表示する文章の後部分
-  ・data-date-format : 日付の表示形式。full…yyyy年m月d日と曜日、long…yyyy年m月d日、short…yyyy/mm/dd
+  ・data-hide-at : カウント結果がここで指定する数以下になった場合、ウィジェットを表示しない。（0日になったら表示しないなどの使い方）
   ・data-iframe-classname : widget配置するiflameのスタイルを指定するCSSクラス名　※他html要素との重複がなければ変更不要
   ・data-iframe-innerstyles-id : widget内のスタイルを定義するstyle要素のid　※他html要素との重複がなければ変更不要
-  ※次のように文章が表示される
-    表示する文章の前部分 + 計算結果の日付 + 表示する文章の後部分
 -->
 <div
   id="widgetPlaceholder"
-  data-today="2024-03-04"
-  data-days-after="5"
-  data-skip-weekends="true"
-  data-holidays="2024-01-01,2024-01-02,2024-01-03,2024-03-11,2024-03-12,2024-03-13,2024-03-14,2024-03-15"
+  data-today="2024-03-01"
+  data-target-date="2024-03-31"
   data-title="お知らせ"
-  data-pre-description="この届け出は"
-  data-post-description="以降に提出可能です。"
-  data-date-format="full"
+  data-pre-description="イベントまで、"
+  data-pre-count="あと"
+  data-post-count="日"
+  data-post-description="です。"
+  data-hide-at="0"
   data-iframe-classname="widget-iframe"
   data-iframe-innerstyles-id="innerStyles"
 >
@@ -46,7 +44,9 @@
       <span class="title">title</span>
       <div class="description">
         <span class="pre-description">predescription</span>
-        <span class="calcurated-date">日付</span>
+        <span class="pre-count">precount</span>
+        <span class="calcurated-count">日数カウント</span>
+        <span class="post-count">postcount</span>
         <span class="post-description">postdescription</span>
       </div>
     </div>
@@ -73,8 +73,14 @@
     font-size: 1em;
     color: gray;
   }
-  /* 日付 */
-  .calcurated-date {
+  /* 日数の前後 */
+  .pre-count,
+  .post-count {
+    font-size: 1em;
+    color: red;
+  }
+  /* 日数カウント */
+  .calcurated-count {
     font-size: 1.5em;
     font-weight: 800;
     color: red;
@@ -124,14 +130,14 @@
     function setWidget(placeholderId) {
       // プレースホルダからパラメータを取得し、非表示にする
       const placeholder = document.getElementById(placeholderId);
-      const holidays = placeholder.dataset.holidays;
       const today = placeholder.dataset.today;
-      const daysAfter = Number(placeholder.dataset.daysAfter);
-      const skipWeekends = placeholder.dataset.skipWeekends === "true";
-      const dateFormat = placeholder.dataset.dateFormat;
+      const targetDate = placeholder.dataset.targetDate;
       const title = placeholder.dataset.title;
       const preDescription = placeholder.dataset.preDescription;
+      const preCount = placeholder.dataset.preCount;
+      const postCount = placeholder.dataset.postCount;
       const postDescription = placeholder.dataset.postDescription;
+      const hideAt = Number(placeholder.dataset.hideAt);
       const iframeClassname = placeholder.dataset.iframeClassname;
       const iframeInnerstylesId = placeholder.dataset.iframeInnerstylesId;
       placeholder.style.display = "none";
@@ -151,14 +157,14 @@
 
       // widgetの中身を作成
       let widget = constructWidget(
-        holidays,
         today,
-        daysAfter,
-        skipWeekends,
+        targetDate,
         title,
         preDescription,
+        preCount,
+        postCount,
         postDescription,
-        dateFormat
+        hideAt
       );
 
       // iframe内htmlとしてwidgetを設定
@@ -173,87 +179,49 @@
      * widgetの内容
      **/
     function constructWidget(
-      holidays,
       today,
-      daysAfter,
-      skipWeekends,
+      targetDate,
       title,
       preDescription,
+      preCount,
+      postCount,
       postDescription,
-      datestyle
+      hideAt
     ) {
-      let calcuratedDate = ((
-        today,
-        holidays,
-        daysAfter,
-        skipWeekends,
-        dateFormat
-      ) => {
-        // 祝日リストをカンマで分割・空白を除去し、配列に格納
-        let holidaysArray = holidays
-          .split(",")
-          .filter((item) => item)
-          .map((item) => item.trim());
+      let calcuratedCount = ((todayStr, targetDateStr) => {
         // todayの値が設定されている場合は、その日とする（テスト用）
-        let calcurated = today ? new Date(today) : new Date();
-        // daysAfter後の日付を計算
-        calcurated.setDate(calcurated.getDate() + daysAfter);
-
-        // 土日や祝日等の考慮
-        while (true) {
-          // 土日または祝日等に該当し、日付を進めた場合、再度評価するためフラグを設定する
-          let proceedingHappened = false;
-
-          // 土日をスキップする
-          if (skipWeekends) {
-            while (true) {
-              if (calcurated.getDay() === 0 || calcurated.getDay() === 6) {
-                calcurated.setDate(calcurated.getDate() + 1);
-                proceedingHappened = true;
-              } else {
-                break;
-              }
-            }
-          }
-          // 祝日リストに含まれていれば翌日にする（繰り返して、祝日リストに含まれない日まで実行）
-          while (true) {
-            let tmpDateStr = calcurated.toISOString().substring(0, 10);
-            if (holidaysArray.includes(tmpDateStr)) {
-              calcurated.setDate(calcurated.getDate() + 1);
-              proceedingHappened = true;
-            } else {
-              break;
-            }
-          }
-          // 土日または祝日等に該当しなかった場合は評価を終了
-          if (!proceedingHappened) {
-            break;
-          }
-        }
-
-        // 日付形式を指定し、文字列で返す
-        return new Intl.DateTimeFormat("ja-JP", {
-          dateStyle: dateFormat,
-          timeZone: "Asia/Tokyo",
-        }).format(calcurated);
-      })(today, holidays, daysAfter, skipWeekends, datestyle);
+        let today = todayStr ? new Date(todayStr) : new Date();
+        today.setHours(0, 0, 0, 0);
+        const targetDate = new Date(targetDateStr);
+        targetDate.setHours(0, 0, 0, 0);
+        return (targetDate - today) / 86400000;
+      })(today, targetDate);
 
       // 文章を接続して作成
       let titleEl = "<span class='title'>" + (title ?? "") + "</span>";
       let preDescEl =
         "<span class='pre-description'>" + (preDescription ?? "") + "</span>";
-      let calculatedDateEl =
-        "<span class='calcurated-date'>" + calcuratedDate + "</span>";
+      let preCountEl =
+        "<span class='pre-count'>" + (preCount ?? "") + "</span>";
+      let calculatedCountEl =
+        "<span class='calcurated-count'>" + calcuratedCount + "</span>";
+      let postCountEl =
+        "<span class='post-count'>" + (postCount ?? "") + "</span>";
       let postDescEl =
         "<span class='post-description'>" + (postDescription ?? "") + "</span>";
 
       // 外枠に入れて返す
       let returnStr =
-        "<div class='container'>" +
+        "<div class='container'" +
+        // hideAt以下の場合、非表示とする
+        (hideAt >= calcuratedCount ? " style='display:none'" : "") +
+        ">" +
         titleEl +
         "<div class='description'>" +
         preDescEl +
-        calculatedDateEl +
+        preCountEl +
+        calculatedCountEl +
+        postCountEl +
         postDescEl +
         "</div>" +
         "</div>";

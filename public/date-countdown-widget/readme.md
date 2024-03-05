@@ -6,7 +6,7 @@
 
   - n 日後が土日にあたる場合を考慮してその翌日にすることができます
   - n 日後が祝日等のイレギュラーな日付にあたる場合を考慮してその翌日にすることができます。祝日等のイレギュラーな日付については設定が可能です
-  - CSS を用いて、デザインの調整が可能です
+  - css を用いて、デザインの調整が可能です
 
 - 使用例
 
@@ -18,7 +18,7 @@
   - [例 6(script 組み込み版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/embedded.html)
   - [例 7(script 組み込み版、複数設置)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/embedded-multi.html)
 
-    - なお、CSS の内容は、[こちらのサイト](https://saruwakakun.com/html-css/reference/css-sample)を参考にしたものとなっています
+    - なお、example2〜4 の内容は、[こちらのサイト](https://saruwakakun.com/html-css/reference/css-sample)を参考にしたものとなっています
 
 ## 使い方(簡易手順)
 
@@ -36,7 +36,7 @@
 
   - コピー方法
 
-    - script 参照版の場合、`referenceX.html`の内容をコピーしてください
+    - script 参照版の場合、`example1.html`または`example2.html`の内容をコピーしてください
     - script 組み込み版の場合、`embedded.html`の内容をコピーしてください
 
   - パラメータの調整
@@ -47,7 +47,7 @@
       - `data-skip-weekends` true に設定した場合、計算後の日付が土日にあたる場合、次の営業日まで進めた日付となります
       - `data-holidays` 祝日リスト。祝日などを yyyy-mm-dd 形式、カンマ区切りで複数設定します。計算後の日付がこのリストに含まれる場合、翌日に進めます。（例："2024-12-30,2024-12-31,2025-01-01,2025-01-01,2025-01-02,2025-01-03"
       - `data-title` タイトルとして表示する文字列を設定します
-      - `data-pre-description`、`data-post-description` : 日付の前後に表示する文章の文言を設定します。
+      - `data-pre-description`、`data-pre-description` : 日付の前後に表示する文章の文言を設定します。
       - `data-date-format` 日付の表示形式。full…yyyy 年 m 月 d 日と曜日、long…yyyy 年 m 月 d 日、short…yyyy/mm/dd
     - 必要に応じて、style 要素の内容を編集し、見た目を調整してください。
 
@@ -70,7 +70,7 @@
     ・data-holidays : 祝日リスト。祝日などをyyyy-mm-dd形式、カンマ区切りで複数設定する。計算後の日付がこのリストに含まれる場合、翌日に進める。
     ・data-title : タイトル
     ・data-pre-description : 表示する文章の前部分
-    ・data-post-description : 表示する文章の後部分
+    ・data-pre-description : 表示する文章の後部分
     ・data-date-format : 日付の表示形式。full…yyyy年m月d日と曜日、long…yyyy年m月d日、short…yyyy/mm/dd
     ・data-iframe-classname : widget配置するiflameのスタイルを指定するCSSクラス名　※他html要素との重複がなければ変更不要
     ・data-iframe-innerstyles-id : widget内のスタイルを定義するstyle要素のid　※他html要素との重複がなければ変更不要
@@ -177,12 +177,12 @@
     <!-- 
       設定の反映処理 
       ・必ずdata-widget-script="true"としてください
-      ・data-placeholder-idsにはプレースホルダ要素のidを設定してください。複数ある場合、カンマ区切りで指定してください
+      ・data-placeholder-idにはプレースホルダ要素のidを設定してください
     -->
     <script
       src="https://ogrtk.github.io/widgets/public/calc-date-widget/calcDateWidget.js"
       data-widget-script="true"
-      data-placeholder-ids="widgetPlaceholder"
+      data-placeholder-id="widgetPlaceholder"
     ></script>
     ```
 
@@ -192,12 +192,173 @@
     <!-- 
       設定の反映処理 
       ・必ずdata-widget-script="true"としてください
-      ・data-placeholder-idsにはプレースホルダ要素のidを設定してください。複数ある場合、カンマ区切りで指定してください
+      ・data-placeholder-idにはプレースホルダ要素のidを設定してください。複数ある場合、カンマ区切りで指定してください
     -->
     <script data-widget-script="true" data-placeholder-ids="widgetPlaceholder">
+      /**
+       *  注意 ここから先は原則として変更しないこと
+       */
+
       (function () {
         "use strict";
-        〜　example/embedded.html のscriiptタグの内容　〜
+
+        const script = document.querySelectorAll(
+          '[data-widget-script="true"]'
+        )[0];
+        const placeholderIds = script.dataset.placeholderIds
+          .split(",")
+          .filter((item) => item)
+          .map((item) => item.trim());
+        placeholderIds.forEach((placeholderId) => {
+          setWidget(placeholderId);
+        });
+
+        /**
+         * プレースホルダにウィジェットを設定
+         */
+        function setWidget(placeholderId) {
+          // プレースホルダからパラメータを取得し、非表示にする
+          const placeholder = document.getElementById(placeholderId);
+          const holidays = placeholder.dataset.holidays;
+          const today = placeholder.dataset.today;
+          const daysAfter = Number(placeholder.dataset.daysAfter);
+          const skipWeekends = placeholder.dataset.skipWeekends === "true";
+          const dateFormat = placeholder.dataset.dateFormat;
+          const title = placeholder.dataset.title;
+          const preDescription = placeholder.dataset.preDescription;
+          const postDescription = placeholder.dataset.postDescription;
+          const iframeClassname = placeholder.dataset.iframeClassname;
+          const iframeInnerstylesId = placeholder.dataset.iframeInnerstylesId;
+          placeholder.style.display = "none";
+
+          // iframeを作成
+          let iframe = document.createElement("iframe");
+          iframe.scrolling = "no";
+          iframe.classList.add(iframeClassname);
+          iframe.addEventListener("load", (e) => {
+            // 高さ自動調節
+            e.currentTarget.style.height =
+              e.currentTarget.contentWindow.document.body.scrollHeight + "px";
+          });
+
+          // iframeを設置
+          placeholder.parentNode.insertBefore(iframe, placeholder);
+
+          // widgetの中身を作成
+          let widget = constructWidget(
+            holidays,
+            today,
+            daysAfter,
+            skipWeekends,
+            title,
+            preDescription,
+            postDescription,
+            dateFormat
+          );
+
+          // iframe内htmlとしてwidgetを設定
+          let doc = iframe.contentWindow.document;
+          doc.open();
+          doc.write(widget);
+          doc.head.appendChild(document.getElementById(iframeInnerstylesId));
+          doc.close();
+        }
+
+        /**
+         * widgetの内容
+         **/
+        function constructWidget(
+          holidays,
+          today,
+          daysAfter,
+          skipWeekends,
+          title,
+          preDescription,
+          postDescription,
+          datestyle
+        ) {
+          let calcuratedDate = ((
+            today,
+            holidays,
+            daysAfter,
+            skipWeekends,
+            dateFormat
+          ) => {
+            // 祝日リストをカンマで分割・空白を除去し、配列に格納
+            let holidaysArray = holidays
+              .split(",")
+              .filter((item) => item)
+              .map((item) => item.trim());
+            // todayの値が設定されている場合は、その日とする（テスト用）
+            let calcurated = today ? new Date(today) : new Date();
+            // daysAfter後の日付を計算
+            calcurated.setDate(calcurated.getDate() + daysAfter);
+
+            // 土日や祝日等の考慮
+            while (true) {
+              // 土日または祝日等に該当し、日付を進めた場合、再度評価するためフラグを設定する
+              let proceedingHappened = false;
+
+              // 土日をスキップする
+              if (skipWeekends) {
+                while (true) {
+                  if (calcurated.getDay() === 0 || calcurated.getDay() === 6) {
+                    calcurated.setDate(calcurated.getDate() + 1);
+                    proceedingHappened = true;
+                  } else {
+                    break;
+                  }
+                }
+              }
+              // 祝日リストに含まれていれば翌日にする（繰り返して、祝日リストに含まれない日まで実行）
+              while (true) {
+                let tmpDateStr = calcurated.toISOString().substring(0, 10);
+                if (holidaysArray.includes(tmpDateStr)) {
+                  calcurated.setDate(calcurated.getDate() + 1);
+                  proceedingHappened = true;
+                } else {
+                  break;
+                }
+              }
+              // 土日または祝日等に該当しなかった場合は評価を終了
+              if (!proceedingHappened) {
+                break;
+              }
+            }
+
+            // 日付形式を指定し、文字列で返す
+            return new Intl.DateTimeFormat("ja-JP", {
+              dateStyle: dateFormat,
+              timeZone: "Asia/Tokyo",
+            }).format(calcurated);
+          })(today, holidays, daysAfter, skipWeekends, datestyle);
+
+          // 文章を接続して作成
+          let titleEl = "<span class='title'>" + (title ?? "") + "</span>";
+          let preDescEl =
+            "<span class='pre-description'>" +
+            (preDescription ?? "") +
+            "</span>";
+          let calculatedDateEl =
+            "<span class='calcurated-date'>" + calcuratedDate + "</span>";
+          let postDescEl =
+            "<span class='post-description'>" +
+            (postDescription ?? "") +
+            "</span>";
+
+          // 外枠に入れて返す
+          let returnStr =
+            "<div class='container'>" +
+            titleEl +
+            "<div class='description'>" +
+            preDescEl +
+            calculatedDateEl +
+            postDescEl +
+            "</div>" +
+            "</div>";
+
+          return returnStr;
+        }
       })();
     </script>
     ```

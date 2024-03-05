@@ -7,7 +7,7 @@
   ・data-holidays : 祝日リスト。祝日などをyyyy-mm-dd形式、カンマ区切りで複数設定する。計算後の日付がこのリストに含まれる場合、翌日に進める。
   ・data-title : タイトル
   ・data-pre-description : 表示する文章の前部分
-  ・data-pre-description : 表示する文章の後部分
+  ・data-post-description : 表示する文章の後部分
   ・data-date-format : 日付の表示形式。full…yyyy年m月d日と曜日、long…yyyy年m月d日、short…yyyy/mm/dd
   ・data-iframe-classname : widget配置するiflameのスタイルを指定するCSSクラス名　※他html要素との重複がなければ変更不要
   ・data-iframe-innerstyles-id : widget内のスタイルを定義するstyle要素のid　※他html要素との重複がなければ変更不要
@@ -198,7 +198,7 @@
 <!-- 
   設定の反映処理 
   ・必ずdata-widget-script="true"としてください
-  ・data-placeholder-idにはプレースホルダ要素のidを設定してください。複数ある場合、カンマ区切りで指定してください
+  ・data-placeholder-idsにはプレースホルダ要素のidを設定してください。複数ある場合、カンマ区切りで指定してください
 -->
 <script
   src="https://ogrtk.github.io/widgets/public/calc-date-widget/calcDateWidget.js"

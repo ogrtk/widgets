@@ -7,7 +7,7 @@
   ・data-holidays : 祝日リスト。祝日などをyyyy-mm-dd形式、カンマ区切りで複数設定する。計算後の日付がこのリストに含まれる場合、翌日に進める。
   ・data-title : タイトル
   ・data-pre-description : 表示する文章の前部分
-  ・data-post-description : 表示する文章の後部分
+  ・data-pre-description : 表示する文章の後部分
   ・data-date-format : 日付の表示形式。full…yyyy年m月d日と曜日、long…yyyy年m月d日、short…yyyy/mm/dd
   ・data-iframe-classname : widget配置するiflameのスタイルを指定するCSSクラス名　※他html要素との重複がなければ変更不要
   ・data-iframe-innerstyles-id : widget内のスタイルを定義するstyle要素のid　※他html要素との重複がなければ変更不要
@@ -49,30 +49,25 @@
 
   /* 全体枠 */
   .container {
-    position: relative;
     margin: 2em 0;
-    padding: 25px 10px 7px;
-    border: solid 3px #0f7e40;
+    background: #e4f4eb;
   }
   /* タイトル */
   .title {
-    position: absolute;
-    display: inline-block;
-    top: -2px;
-    left: -2px;
-    padding: 0 9px;
-    height: 25px;
-    line-height: 25px;
-    font-size: 17px;
+    display: block;
+    font-size: 1.2em;
     background: #0f7e40;
-    color: #ffffff;
+    padding: 4px;
+    text-align: center;
+    color: #fff;
     font-weight: bold;
+    letter-spacing: 0.05em;
   }
   /* 文章全体 */
   .description {
     text-align: center;
+    padding: 15px 20px;
     margin: 0;
-    padding: 0;
   }
   /* 前後の文章 */
   .pre-description,
@@ -106,7 +101,7 @@
 <!-- 
   設定の反映処理 
   ・必ずdata-widget-script="true"としてください
-  ・data-placeholder-idsにはプレースホルダ要素のidを設定してください。複数ある場合、カンマ区切りで指定してください
+  ・data-placeholder-idにはプレースホルダ要素のidを設定してください。複数ある場合、カンマ区切りで指定してください
 -->
 <script
   src="https://ogrtk.github.io/widgets/public/calc-date-widget/calcDateWidget.js"
