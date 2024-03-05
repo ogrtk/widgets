@@ -1,24 +1,24 @@
-# calc-date-widget
+# date-countdown-widget
 
 ## 概要
 
-- n 日後の日付を計算し、文章に組み込んで表示するウィジェットです
+- 「あと n 日」のように、対象の日付からの日数を計算して文章に組み込んで表示するウィジェットです
 
-  - n 日後が土日にあたる場合を考慮してその翌日にすることができます
-  - n 日後が祝日等のイレギュラーな日付にあたる場合を考慮してその翌日にすることができます。祝日等のイレギュラーな日付については設定が可能です
+  - イベントなどの対象日付を設定できます
+  - 対象日付に到達時には非表示にする設定が可能です
   - css を用いて、デザインの調整が可能です
 
 - 使用例
 
-  - [例 1(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/reference1.html)
-  - [例 2(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/reference2.html)
-  - [例 3(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/reference3.html)
-  - [例 4(script 参照版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/reference4.html)
-  - [例 5(script 参照版、複数設置)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/reference-multi.html)
-  - [例 6(script 組み込み版)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/embedded.html)
-  - [例 7(script 組み込み版、複数設置)](https://ogrtk.github.io/widgets/public/calc-date-widget/examples/embedded-multi.html)
+  - [例 1(script 参照版)](https://ogrtk.github.io/widgets/public/date-countdown-widget/examples/reference1.html)
+  - [例 2(script 参照版)](https://ogrtk.github.io/widgets/public/date-countdown-widget/examples/reference2.html)
+  - [例 3(script 参照版)](https://ogrtk.github.io/widgets/public/date-countdown-widget/examples/reference3.html)
+  - [例 4(script 参照版)](https://ogrtk.github.io/widgets/public/date-countdown-widget/examples/reference4.html)
+  - [例 5(script 参照版、複数設置)](https://ogrtk.github.io/widgets/public/date-countdown-widget/examples/reference-multi.html)
+  - [例 6(script 組み込み版)](https://ogrtk.github.io/widgets/public/date-countdown-widget/examples/embedded.html)
+  - [例 7(script 組み込み版、複数設置)](https://ogrtk.github.io/widgets/public/date-countdown-widget/examples/embedded-multi.html)
 
-    - なお、example2〜4 の内容は、[こちらのサイト](https://saruwakakun.com/html-css/reference/css-sample)を参考にしたものとなっています
+    - なお、CSS の内容は、[こちらのサイト](https://saruwakakun.com/html-css/reference/css-sample)を参考にしたものとなっています
 
 ## 使い方(簡易手順)
 
@@ -36,19 +36,18 @@
 
   - コピー方法
 
-    - script 参照版の場合、`example1.html`または`example2.html`の内容をコピーしてください
+    - script 参照版の場合、`referenceX.html`の内容をコピーしてください
     - script 組み込み版の場合、`embedded.html`の内容をコピーしてください
 
   - パラメータの調整
     - コピーした内容には、冒頭にウィジェット配置用の div 要素が記載されています。この div 要素に様々な data 属性を定義することで、利用用途にあった表示となるよう設定が可能です
     - 主要なパラメータとして以下を設定してください
       - `data-today` 空にします（現在日がシステム日付となります）
-      - `data-days-after` 計算したい n 日後の n の数値を設定します
-      - `data-skip-weekends` true に設定した場合、計算後の日付が土日にあたる場合、次の営業日まで進めた日付となります
-      - `data-holidays` 祝日リスト。祝日などを yyyy-mm-dd 形式、カンマ区切りで複数設定します。計算後の日付がこのリストに含まれる場合、翌日に進めます。（例："2024-12-30,2024-12-31,2025-01-01,2025-01-01,2025-01-02,2025-01-03"
+      - `data-target-date` 対象の日付を yyyy-mm-dd 形式で設定します
       - `data-title` タイトルとして表示する文字列を設定します
-      - `data-pre-description`、`data-pre-description` : 日付の前後に表示する文章の文言を設定します。
-      - `data-date-format` 日付の表示形式。full…yyyy 年 m 月 d 日と曜日、long…yyyy 年 m 月 d 日、short…yyyy/mm/dd
+      - `data-pre-description`、`data-pre-description` : 日数の前後に表示する文章の文言を設定します。
+      - `data-pre-count`、`data-pre-count` : 日数の直前直後に表示する文章の文言を設定します。
+      - `data-hide-at` ここで設定する日数以下になった場合、ウィジェットを非表示にします（0 にした場合、対象日付になったら表示しない）
     - 必要に応じて、style 要素の内容を編集し、見た目を調整してください。
 
 ## 使い方(詳細手順)
@@ -62,24 +61,24 @@
 
   ```html
   <!--
-    プレースホルダ。実行時には非表示となる
-    data-xxxxx の属性を編集し、必要なパラメータを設定する
-    ・data-today : 現在日として扱う日付をyyyy-mm-dd形式で設定する。基本的に設定しなくて良い（空にする）。動作確認用。
-    ・data-days-after : 現在日＋ここで設定する日数後の日付を計算する。マイナスも設定可。
-    ・data-skip-weekends : trueに設定した場合、計算後の日付が土日にあたる場合、次の営業日まで進めた日付とする
-    ・data-holidays : 祝日リスト。祝日などをyyyy-mm-dd形式、カンマ区切りで複数設定する。計算後の日付がこのリストに含まれる場合、翌日に進める。
-    ・data-title : タイトル
-    ・data-pre-description : 表示する文章の前部分
-    ・data-pre-description : 表示する文章の後部分
-    ・data-date-format : 日付の表示形式。full…yyyy年m月d日と曜日、long…yyyy年m月d日、short…yyyy/mm/dd
-    ・data-iframe-classname : widget配置するiflameのスタイルを指定するCSSクラス名　※他html要素との重複がなければ変更不要
-    ・data-iframe-innerstyles-id : widget内のスタイルを定義するstyle要素のid　※他html要素との重複がなければ変更不要
-    ※次のように文章が表示される
-      表示する文章の前部分 + 計算結果の日付 + 表示する文章の後部分
+  プレースホルダ。実行時には非表示となる
+  data-xxxxx の属性を編集し、必要なパラメータを設定する
+  ・data-today : 現在日として扱う日付をyyyy-mm-dd形式で設定する。基本的に設定しなくて良い（空にする）。動作確認用。
+  ・data-days-after : 現在日＋ここで設定する日数後の日付を計算する。マイナスも設定可。
+  ・data-skip-weekends : trueに設定した場合、計算後の日付が土日にあたる場合、次の営業日まで進めた日付とする
+  ・data-holidays : 祝日リスト。祝日などをyyyy-mm-dd形式、カンマ区切りで複数設定する。計算後の日付がこのリストに含まれる場合、翌日に進める。
+  ・data-title : タイトル
+  ・data-pre-description : 表示する文章の前部分
+  ・data-post-description : 表示する文章の後部分
+  ・data-date-format : 日付の表示形式。full…yyyy年m月d日と曜日、long…yyyy年m月d日、short…yyyy/mm/dd
+  ・data-iframe-classname : widget配置するiflameのスタイルを指定するCSSクラス名　※他html要素との重複がなければ変更不要
+  ・data-iframe-innerstyles-id : widget内のスタイルを定義するstyle要素のid　※他html要素との重複がなければ変更不要
+  ※次のように文章が表示される
+    表示する文章の前部分 + 計算結果の日付 + 表示する文章の後部分
   -->
   <div
     id="widgetPlaceholder"
-    data-today=""
+    data-today="2024-03-04"
     data-days-after="5"
     data-skip-weekends="true"
     data-holidays="2024-01-01,2024-01-02,2024-01-03,2024-03-11,2024-03-12,2024-03-13,2024-03-14,2024-03-15"
@@ -96,48 +95,37 @@
 
   ```html
   <style id="innerStyles">
-    /* 
+    /*
       文字部分のスタイルをここで設定します
-      style要素のIDは、data-iframe-innerstyles-idと一致するようにしてください 
+      style要素のIDは、data-iframe-innerstyles-idと一致するようにしてください
   
       widgetは次のようなhtmlで構成されます
       <div class="container">
         <span class="title">title</span>
         <div class="description">
           <span class="pre-description">predescription</span>
-          <span class="calcurated-date">日付</span>
+          <span class="pre-count">precount</span>
+          <span class="calcurated-count">日数カウント</span>
+          <span class="post-count">postcount</span>
           <span class="post-description">postdescription</span>
         </div>
-      </div> 
+      </div>
     */
 
     /* 全体枠 */
     .container {
       position: relative;
-      margin: 2em 0;
-      padding: 0.5em 1em;
-      border: solid 3px #62c1ce;
+      border: 3px solid #0f7e40;
+      border-radius: 10px;
+      padding: 10px;
     }
     /* タイトル */
     .title {
-      position: absolute;
-      display: inline-block;
-      top: -27px;
-      left: -3px;
-      padding: 0 9px;
-      height: 25px;
-      line-height: 25px;
-      font-size: 17px;
-      background: #62c1ce;
-      color: #ffffff;
-      font-weight: bold;
-      border-radius: 5px 5px 0 0;
+      display: none;
     }
     /* 文章全体 */
     .description {
       text-align: center;
-      margin: 0;
-      padding: 0;
     }
     /* 前後の文章 */
     .pre-description,
@@ -145,8 +133,14 @@
       font-size: 1em;
       color: gray;
     }
-    /* 日付 */
-    .calcurated-date {
+    /* 日数の前後 */
+    .pre-count,
+    .post-count {
+      font-size: 1em;
+      color: red;
+    }
+    /* 日数カウント */
+    .calcurated-count {
       font-size: 1.5em;
       font-weight: 800;
       color: red;
@@ -177,12 +171,12 @@
     <!-- 
       設定の反映処理 
       ・必ずdata-widget-script="true"としてください
-      ・data-placeholder-idにはプレースホルダ要素のidを設定してください
+      ・data-placeholder-idsにはプレースホルダ要素のidを設定してください。複数ある場合、カンマ区切りで指定してください
     -->
     <script
-      src="https://ogrtk.github.io/widgets/public/calc-date-widget/calcDateWidget.js"
+      src="https://ogrtk.github.io/widgets/public/date-countdown-widget/dateCountdownWidget.js"
       data-widget-script="true"
-      data-placeholder-id="widgetPlaceholder"
+      data-placeholder-ids="widgetPlaceholder"
     ></script>
     ```
 
@@ -192,173 +186,12 @@
     <!-- 
       設定の反映処理 
       ・必ずdata-widget-script="true"としてください
-      ・data-placeholder-idにはプレースホルダ要素のidを設定してください。複数ある場合、カンマ区切りで指定してください
+      ・data-placeholder-idsにはプレースホルダ要素のidを設定してください。複数ある場合、カンマ区切りで指定してください
     -->
     <script data-widget-script="true" data-placeholder-ids="widgetPlaceholder">
-      /**
-       *  注意 ここから先は原則として変更しないこと
-       */
-
       (function () {
         "use strict";
-
-        const script = document.querySelectorAll(
-          '[data-widget-script="true"]'
-        )[0];
-        const placeholderIds = script.dataset.placeholderIds
-          .split(",")
-          .filter((item) => item)
-          .map((item) => item.trim());
-        placeholderIds.forEach((placeholderId) => {
-          setWidget(placeholderId);
-        });
-
-        /**
-         * プレースホルダにウィジェットを設定
-         */
-        function setWidget(placeholderId) {
-          // プレースホルダからパラメータを取得し、非表示にする
-          const placeholder = document.getElementById(placeholderId);
-          const holidays = placeholder.dataset.holidays;
-          const today = placeholder.dataset.today;
-          const daysAfter = Number(placeholder.dataset.daysAfter);
-          const skipWeekends = placeholder.dataset.skipWeekends === "true";
-          const dateFormat = placeholder.dataset.dateFormat;
-          const title = placeholder.dataset.title;
-          const preDescription = placeholder.dataset.preDescription;
-          const postDescription = placeholder.dataset.postDescription;
-          const iframeClassname = placeholder.dataset.iframeClassname;
-          const iframeInnerstylesId = placeholder.dataset.iframeInnerstylesId;
-          placeholder.style.display = "none";
-
-          // iframeを作成
-          let iframe = document.createElement("iframe");
-          iframe.scrolling = "no";
-          iframe.classList.add(iframeClassname);
-          iframe.addEventListener("load", (e) => {
-            // 高さ自動調節
-            e.currentTarget.style.height =
-              e.currentTarget.contentWindow.document.body.scrollHeight + "px";
-          });
-
-          // iframeを設置
-          placeholder.parentNode.insertBefore(iframe, placeholder);
-
-          // widgetの中身を作成
-          let widget = constructWidget(
-            holidays,
-            today,
-            daysAfter,
-            skipWeekends,
-            title,
-            preDescription,
-            postDescription,
-            dateFormat
-          );
-
-          // iframe内htmlとしてwidgetを設定
-          let doc = iframe.contentWindow.document;
-          doc.open();
-          doc.write(widget);
-          doc.head.appendChild(document.getElementById(iframeInnerstylesId));
-          doc.close();
-        }
-
-        /**
-         * widgetの内容
-         **/
-        function constructWidget(
-          holidays,
-          today,
-          daysAfter,
-          skipWeekends,
-          title,
-          preDescription,
-          postDescription,
-          datestyle
-        ) {
-          let calcuratedDate = ((
-            today,
-            holidays,
-            daysAfter,
-            skipWeekends,
-            dateFormat
-          ) => {
-            // 祝日リストをカンマで分割・空白を除去し、配列に格納
-            let holidaysArray = holidays
-              .split(",")
-              .filter((item) => item)
-              .map((item) => item.trim());
-            // todayの値が設定されている場合は、その日とする（テスト用）
-            let calcurated = today ? new Date(today) : new Date();
-            // daysAfter後の日付を計算
-            calcurated.setDate(calcurated.getDate() + daysAfter);
-
-            // 土日や祝日等の考慮
-            while (true) {
-              // 土日または祝日等に該当し、日付を進めた場合、再度評価するためフラグを設定する
-              let proceedingHappened = false;
-
-              // 土日をスキップする
-              if (skipWeekends) {
-                while (true) {
-                  if (calcurated.getDay() === 0 || calcurated.getDay() === 6) {
-                    calcurated.setDate(calcurated.getDate() + 1);
-                    proceedingHappened = true;
-                  } else {
-                    break;
-                  }
-                }
-              }
-              // 祝日リストに含まれていれば翌日にする（繰り返して、祝日リストに含まれない日まで実行）
-              while (true) {
-                let tmpDateStr = calcurated.toISOString().substring(0, 10);
-                if (holidaysArray.includes(tmpDateStr)) {
-                  calcurated.setDate(calcurated.getDate() + 1);
-                  proceedingHappened = true;
-                } else {
-                  break;
-                }
-              }
-              // 土日または祝日等に該当しなかった場合は評価を終了
-              if (!proceedingHappened) {
-                break;
-              }
-            }
-
-            // 日付形式を指定し、文字列で返す
-            return new Intl.DateTimeFormat("ja-JP", {
-              dateStyle: dateFormat,
-              timeZone: "Asia/Tokyo",
-            }).format(calcurated);
-          })(today, holidays, daysAfter, skipWeekends, datestyle);
-
-          // 文章を接続して作成
-          let titleEl = "<span class='title'>" + (title ?? "") + "</span>";
-          let preDescEl =
-            "<span class='pre-description'>" +
-            (preDescription ?? "") +
-            "</span>";
-          let calculatedDateEl =
-            "<span class='calcurated-date'>" + calcuratedDate + "</span>";
-          let postDescEl =
-            "<span class='post-description'>" +
-            (postDescription ?? "") +
-            "</span>";
-
-          // 外枠に入れて返す
-          let returnStr =
-            "<div class='container'>" +
-            titleEl +
-            "<div class='description'>" +
-            preDescEl +
-            calculatedDateEl +
-            postDescEl +
-            "</div>" +
-            "</div>";
-
-          return returnStr;
-        }
+        〜　example/embedded.html のscriiptタグの内容　〜
       })();
     </script>
     ```

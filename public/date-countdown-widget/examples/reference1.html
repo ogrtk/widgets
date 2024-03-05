@@ -36,7 +36,9 @@
       <span class="title">title</span>
       <div class="description">
         <span class="pre-description">predescription</span>
-        <span class="calcurated-date">日付</span>
+        <span class="pre-count">precount</span>
+        <span class="calcurated-count">日数カウント</span>
+        <span class="post-count">postcount</span>
         <span class="post-description">postdescription</span>
       </div>
     </div>
@@ -69,8 +71,8 @@
     font-size: 1em;
     color: red;
   }
-  /* 日付 */
-  .calcurated-date {
+  /* 日数カウント */
+  .calcurated-count {
     font-size: 1.5em;
     font-weight: 800;
     color: red;
@@ -95,7 +97,7 @@
 <!-- 
   設定の反映処理 
   ・必ずdata-widget-script="true"としてください
-  ・data-placeholder-idにはプレースホルダ要素のidを設定してください。複数ある場合、カンマ区切りで指定してください
+  ・data-placeholder-idsにはプレースホルダ要素のidを設定してください。複数ある場合、カンマ区切りで指定してください
 -->
 <script
   src="https://ogrtk.github.io/widgets/public/date-countdown-widget/dateCountdownWidget.js"
